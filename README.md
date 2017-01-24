@@ -1,2 +1,2 @@
 # AQSearch
-Project on search for a query word in audio in a huge corpus audio file.
+Library to search for a query word (audio format) in a huge corpus audio file.
