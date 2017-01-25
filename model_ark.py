@@ -25,13 +25,14 @@ class AQSearch():
 
     def change_range(self, matrix):
         newMatrix = np.ndarray(shape=matrix.shape)
-        newMax = 1
-        newMin = -1
-        for x in xrange(matrix.shape[0]):
-            oldMin = min(matrix[x])
-            oldMax = max(matrix[x])
-            for y in xrange(matrix.shape[1]):
-                newMatrix[x][y] = (((matrix[x][y] - oldMin) * (newMax - newMin)) / (oldMax - oldMin)) + newMin
+        newMax = 1000
+        newMin = 0
+        oldMin = np.amin(matrix)
+        for r in xrange(matrix.shape[0]):
+            oldMax = np.amax(matrix[r])
+            for c in xrange(matrix.shape[1]):
+                newMatrix[r][c] = (((matrix[r][c] - oldMin) * (newMax - newMin)) / (oldMax - oldMin)) + newMin
+                #newMatrix[r][c] = (((matrix[r][c] - oldMin)/oldMax)-0.5)*2
 
         return newMatrix
 
@@ -43,24 +44,44 @@ class AQSearch():
 
         sp = SPRING_DTW(1000, self.q_bn_feature_matrix, self.c_bn_feature_matrix)
         matrix, matches, start_end_data = sp.main()
-        matrix = self.change_range(matrix)
+
+        # matrix = np.flipud(matrix)
         print matches
         print len(matches)
 
         for x in start_end_data:
             print x[0], x[1]
+
         print matrix, matrix.shape
         fig, ax = plt.subplots()
-        matrix = np.flipud(matrix)
+
         ax.matshow(matrix, cmap=plt.cm.RdGy)
+
+        plt.show()
+
+        '''
+        ax.plot(matrix[0], 'r-', matrix[69], 'g-')
+        matrix = self.change_range(matrix)
+        ax.plot(matrix[0], 'r-', matrix[69], 'g-')
+        '''
+        plt.figure(1)
+        plt.subplot(211)
+        plt.plot(matrix[0], 'r-', matrix[65], 'b--', matrix[69], 'g-')
+
+        plt.subplot(212)
+        matrix = self.change_range(matrix)
+        plt.plot(matrix[0], 'r-', matrix[65], 'b--', matrix[69], 'g-')
+        plt.show()
+
+        fig, ax = plt.subplots()
+        ax.matshow(matrix, cmap=plt.cm.RdGy)
+        plt.show()
+
         """
         for (i, j), z in np.ndenumerate(temp):
             if i == 0:
                 ax.text(j, i, '{:0.1f}'.format(z), ha='center', va='center')
         """
-        plt.show()
-
-
 
         import pyaudio
         import wave
