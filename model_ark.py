@@ -28,8 +28,12 @@ class AQSearch():
         newMatrix = np.ndarray(shape=matrix.shape)
         newMax = 1000
         newMin = 0
-        oldMin = np.amin(matrix)
+
         for r in xrange(matrix.shape[0]):
+            if r==0:
+                oldMin = np.amin(matrix[0])
+            else:
+                oldMin = np.amin(matrix[max(0, r-40):r])
             oldMax = np.amax(matrix[r])
             for c in xrange(matrix.shape[1]):
                 newMatrix[r][c] = (((matrix[r][c] - oldMin) * (newMax - newMin)) / (oldMax - oldMin)) + newMin
