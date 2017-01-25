@@ -1,11 +1,10 @@
 from mfcc import FeatureExtractor
 from SPRING import SPRING_DTW
 import numpy as np
-from readArk import read_scp
 import matplotlib.pyplot as plt
 
 
-# for eculidean distance of 2 vectors, use dist = numpy.linalg.norm(a-b)
+# for euclidean distance of 2 vectors, use dist = numpy.linalg.norm(a-b)
 
 class AQSearch():
     # initialize with the corpus audio file
@@ -13,9 +12,8 @@ class AQSearch():
         self.FE = FeatureExtractor()
 
         self.c_mfcc_feature_matrix = self.FE.mfcc(c_audio_path)
+        self.q_mfcc_feature_matrix = 0
         pass
-
-
 
     # send the query file for searching in the corpus file.
     def search(self, q_audio_path):

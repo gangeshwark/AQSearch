@@ -5,7 +5,9 @@ from readArk import read_scp
 import matplotlib.pyplot as plt
 
 
-# for eculidean distance of 2 vectors, use dist = numpy.linalg.norm(a-b)
+# for euclidean distance of 2 vectors, use dist = numpy.linalg.norm(a-b)
+
+# class to play audio from a particular frame.
 class AudioPlay():
     def __init__(self):
         pass
@@ -16,11 +18,9 @@ class AudioPlay():
 
 class AQSearch():
     # initialize with the corpus audio file
-    def __init__(self, c_audio_path):
-        # self.FE = FeatureExtractor()
-
-        # self.c_mfcc_feature_matrix = self.FE.mfcc(c_audio_path)
-        # print self.c_mfcc_feature_matrix
+    def __init__(self):
+        self.c_bn_feature_matrix = 0
+        self.q_bn_feature_matrix = 0
         pass
 
     def change_range(self, matrix):
@@ -36,7 +36,7 @@ class AQSearch():
         return newMatrix
 
     # send the query file for searching in the corpus file.
-    def search(self, q_audio_path):
+    def search(self):
         # self.q_mfcc_feature_matrix = self.FE.mfcc(q_audio_path)
         self.c_bn_feature_matrix = read_scp('outdir/bnf_database/raw_bnfea_fbank_pitch.1.scp')
         self.q_bn_feature_matrix = read_scp('outdir/bnf_query/raw_bnfea_fbank_pitch.1.scp')
@@ -71,5 +71,5 @@ if __name__ == '__main__':
     c_wave_path = '/home/gangeshwark/PycharmProjects/AQSearch/data/my4Hellow.wav'
     q_wave_path = '/home/gangeshwark/PycharmProjects/AQSearch/data/queryHellow.wav'
 
-    AQS = AQSearch(c_audio_path=c_wave_path)
-    AQS.search(q_audio_path=q_wave_path)
+    AQS = AQSearch()
+    AQS.search()
