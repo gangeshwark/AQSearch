@@ -23,6 +23,7 @@ class AQSearch():
         self.q_bn_feature_matrix = 0
         pass
 
+
     def change_range(self, matrix):
         newMatrix = np.ndarray(shape=matrix.shape)
         newMax = 1000
