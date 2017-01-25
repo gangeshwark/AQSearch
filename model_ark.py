@@ -38,26 +38,29 @@ class AQSearch():
     # send the query file for searching in the corpus file.
     def search(self, q_audio_path):
         # self.q_mfcc_feature_matrix = self.FE.mfcc(q_audio_path)
-        self.c_mfcc_feature_matrix = read_scp('outdir/bnf_database/raw_bnfea_fbank_pitch.1.scp')
-        self.q_mfcc_feature_matrix = read_scp('outdir/bnf_query/raw_bnfea_fbank_pitch.1.scp')
+        self.c_bn_feature_matrix = read_scp('outdir/bnf_database/raw_bnfea_fbank_pitch.1.scp')
+        self.q_bn_feature_matrix = read_scp('outdir/bnf_query/raw_bnfea_fbank_pitch.1.scp')
 
-        sp = SPRING_DTW(1000, self.q_mfcc_feature_matrix, self.c_mfcc_feature_matrix)
+        sp = SPRING_DTW(1000, self.q_bn_feature_matrix, self.c_bn_feature_matrix)
         matrix, matches, start_end_data = sp.main()
         matrix = self.change_range(matrix)
         print matches
         print len(matches)
+
+        for x in start_end_data:
+            print x[0], x[1]
         # print matrix, matrix.shape
         fig, ax = plt.subplots()
         matrix = np.flipud(matrix)
         ax.matshow(matrix, cmap=plt.cm.RdGy)
-        """for (i, j), z in np.ndenumerate(temp):
+        """
+        for (i, j), z in np.ndenumerate(temp):
             if i == 0:
                 ax.text(j, i, '{:0.1f}'.format(z), ha='center', va='center')
         """
         plt.show()
 
-        for x in start_end_data:
-            print x[0], x[1]
+
 
         import pyaudio
         import wave

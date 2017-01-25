@@ -13,7 +13,6 @@ class AQSearch():
         self.FE = FeatureExtractor()
 
         self.c_mfcc_feature_matrix = self.FE.mfcc(c_audio_path)
-        #print self.c_mfcc_feature_matrix
         pass
 
 
@@ -21,9 +20,6 @@ class AQSearch():
     # send the query file for searching in the corpus file.
     def search(self, q_audio_path):
         self.q_mfcc_feature_matrix = self.FE.mfcc(q_audio_path)
-        #self.c_mfcc_feature_matrix = read_scp('outdir/bnf_database/raw_bnfea_fbank_pitch.1.scp')
-        #self.q_mfcc_feature_matrix = read_scp('outdir/bnf_query/raw_bnfea_fbank_pitch.1.scp')
-
 
         sp = SPRING_DTW(220, self.q_mfcc_feature_matrix, self.c_mfcc_feature_matrix)
         matrix, matches = sp.main()
