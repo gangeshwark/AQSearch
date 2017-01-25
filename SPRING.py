@@ -1,5 +1,10 @@
 import numpy as np
 
+"""
+The threshold for the matching process has to be chosen by the user - yet in reality the choice of threshold is
+a non-trivial problem regarding the quality of the matching process
+"""
+
 
 class SPRING_DTW():
     def __init__(self, eps, q_mfcc, c_mfcc):
@@ -116,11 +121,3 @@ class SPRING_DTW():
                 self.S_recent[i] = self.S_now[i]
 
         return self.dist_matrix, self.matches, self.start_end_data
-
-
-if __name__ == '__main__':
-    # the threshold for the matching process has to be chosen by the user - yet in reality the choice of threshold is a non-trivial problem regarding the quality of the matching process
-    # Getting Epsilon from the user
-    epsilon = input("Please define epsilon: ")
-    sp_dtw = SPRING_DTW(eps=epsilon)
-    sp_dtw.main()
