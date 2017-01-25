@@ -49,7 +49,7 @@ class AQSearch():
 
         for x in start_end_data:
             print x[0], x[1]
-        # print matrix, matrix.shape
+        print matrix, matrix.shape
         fig, ax = plt.subplots()
         matrix = np.flipud(matrix)
         ax.matshow(matrix, cmap=plt.cm.RdGy)
