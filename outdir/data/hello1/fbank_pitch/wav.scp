@@ -1,0 +1,1 @@
+hello1 /usr/bin/sox hello1.wav -r 8000 -c 1 -b 16 -t wav - |
