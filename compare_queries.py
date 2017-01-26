@@ -84,14 +84,34 @@ class Dummy():
             print "\nPerforming DTW on features of %d and %d" % (median_matrix, x)
             # if x == median_matrix:
             # continue
-            sp = SPRING_DTW(1000, self.feature_array[x], self.feature_array[median_matrix])
-            matrix, matches, start_end_data = sp.main()
-            matrix = np.flipud(matrix)
+            sp = SPRING_DTW(2000, self.feature_array[x], self.feature_array[median_matrix])
+            matrix, matches, start_end_data, paths = sp.main()
+            print matches
+            # matrix = np.flipud(matrix)
             # matrix = self.change_range(matrix)
             # Plot heat map
             fig, ax = plt.subplots()
             ax.matshow(matrix, cmap=plt.cm.RdGy)
+            path_xs = []
+            path_ys = []
+            for path in paths:
+                print path
+                path_x = []
+                path_y = []
+                for point in path:
+                    path_x.append(point[0])
+                    path_y.append(point[1])
+
+                path_xs.append(path_x)
+                path_ys.append(path_y)
+
+            print len(path_xs), len(path_ys)
+            for x in xrange(len(path_xs)):
+                plt.plot(path_xs[x], path_ys[x])
             plt.show()
+
+            for p in start_end_data:
+                print p[0], p[1]
 
 
 if __name__ == '__main__':

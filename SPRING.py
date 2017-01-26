@@ -78,7 +78,37 @@ class SPRING_DTW():
                     starting_point_new[i] = starting_point_recent[i - 1]
         return starting_point_new
 
-        # 2.Calculation for each incoming point x.t - simulated here by simply calculating along the given static list
+    def find_path(self, data):
+        x = data[1]
+        y = self.dist_matrix.shape[0]
+        path = [[x, y]]
+        i = y - 1
+        j = x - 1
+        while i > 0 and j > 0:
+            if i == 0:
+                j -= 1
+            elif j == 0:
+                i -= 1
+            else:
+                if self.dist_matrix[i - 1, j] == min(self.dist_matrix[i - 1, j - 1], self.dist_matrix[i - 1, j],
+                                                     self.dist_matrix[i, j - 1]):
+                    i -= 1
+                elif self.dist_matrix[i, j - 1] == min(self.dist_matrix[i - 1, j - 1], self.dist_matrix[i - 1, j],
+                                                       self.dist_matrix[i, j - 1]):
+                    j -= 1
+                else:
+                    i -= 1
+                    j -= 1
+            path.append([j, i])
+        path.append([data[0], 0])
+        return path
+
+    def find_all_paths(self, ):
+        paths = []
+        for x in self.start_end_data:
+            paths.append(self.find_path(x))
+
+        return paths
 
     def main(self):
         l = len(self.stream)
@@ -95,16 +125,16 @@ class SPRING_DTW():
                     self.d_rep = self.D_now[self.n - 1]
                     self.J_s = self.S_now[self.n - 1]
                     self.J_e = j + 1
-                    # print "REPORT: Distance " + str(self.d_rep) + " with a starting point of " + str(
-                    # self.J_s) + " and ending at " + str(self.J_e)
+                    print "REPORT: Distance " + str(self.d_rep) + " with a starting point of " + str(
+                     self.J_s) + " and ending at " + str(self.J_e)
 
             # Identify optimal subsequence
             for i in range(self.n):
                 if self.D_now[i] >= self.d_rep or self.S_now[i] > self.J_e:
                     self.check = self.check + 1
             if self.check == self.n:
-                """print "MATCH: Distance " + str(self.d_rep) + " with a starting point of " + str(
-                    self.J_s) + " and ending at " + str(self.J_e)"""
+                print "MATCH: Distance " + str(self.d_rep) + " with a starting point of " + str(
+                    self.J_s) + " and ending at " + str(self.J_e)
                 self.matches.append(str(self.d_rep) + "," + str(self.J_s) + "," + str(self.J_e))
                 self.start_end_data.append([self.J_s, self.J_e])
                 self.d_rep = float("inf")
@@ -119,4 +149,4 @@ class SPRING_DTW():
                 self.D_recent[i] = self.D_now[i]
                 self.S_recent[i] = self.S_now[i]
 
-        return self.dist_matrix, self.matches, self.start_end_data
+        return self.dist_matrix, self.matches, self.start_end_data, self.find_all_paths()
