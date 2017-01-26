@@ -95,17 +95,16 @@ class SPRING_DTW():
                     self.d_rep = self.D_now[self.n - 1]
                     self.J_s = self.S_now[self.n - 1]
                     self.J_e = j + 1
-                    print "REPORT: Distance " + str(self.d_rep) + " with a starting point of " + str(
-                        self.J_s) + " and ending at " + str(self.J_e)
+                    # print "REPORT: Distance " + str(self.d_rep) + " with a starting point of " + str(
+                    # self.J_s) + " and ending at " + str(self.J_e)
 
             # Identify optimal subsequence
             for i in range(self.n):
                 if self.D_now[i] >= self.d_rep or self.S_now[i] > self.J_e:
                     self.check = self.check + 1
             if self.check == self.n:
-                print "MATCH: Distance " + str(self.d_rep) + " with a starting point of " + str(
-                    self.J_s) + " and ending at " + str(
-                    self.J_e)
+                """print "MATCH: Distance " + str(self.d_rep) + " with a starting point of " + str(
+                    self.J_s) + " and ending at " + str(self.J_e)"""
                 self.matches.append(str(self.d_rep) + "," + str(self.J_s) + "," + str(self.J_e))
                 self.start_end_data.append([self.J_s, self.J_e])
                 self.d_rep = float("inf")
