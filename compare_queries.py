@@ -62,11 +62,11 @@ class Dummy():
         newMin = -1
 
         for r in xrange(matrix.shape[0]):
-            oldMin = np.amin(matrix[r])
-            """if r == 0:
+            #oldMin = np.amin(matrix[r])
+            if r == 0:
                 oldMin = np.amin(matrix[0])
             else:
-                oldMin = np.amin(matrix[max(0, r - 40):r])"""
+                oldMin = np.amin(matrix[max(0, r - 40):r])
             oldMax = np.amax(matrix[r])
             for c in xrange(matrix.shape[1]):
                 newMatrix[r][c] = (((matrix[r][c] - oldMin) * (newMax - newMin)) / (oldMax - oldMin)) + newMin
@@ -88,7 +88,7 @@ class Dummy():
             matrix, matches, start_end_data, paths = sp.main()
             print matches
             # matrix = np.flipud(matrix)
-            # matrix = self.change_range(matrix)
+            matrix = self.change_range(matrix)
             # Plot heat map
             fig, ax = plt.subplots()
             ax.matshow(matrix, cmap=plt.cm.RdGy)
