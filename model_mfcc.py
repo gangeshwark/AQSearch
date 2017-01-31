@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 # for euclidean distance of 2 vectors, use dist = numpy.linalg.norm(a-b)
 
-class AQSearch():
+class AQSearch:
     # initialize with the corpus audio file
     def __init__(self, c_audio_path):
         self.FE = FeatureExtractor()

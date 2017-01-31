@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 # for euclidean distance of 2 vectors, use dist = numpy.linalg.norm(a-b)
 
 # class to play audio from a particular frame.
-class AudioPlay():
+class AudioPlay:
     def __init__(self):
         pass
 
@@ -16,7 +16,7 @@ class AudioPlay():
         pass
 
 
-class AQSearch():
+class AQSearch:
     # initialize with the corpus audio file
     def __init__(self):
         self.c_bn_feature_matrix = 0
@@ -66,8 +66,7 @@ class AQSearch():
         sp = SPRING_DTW(1000, self.q_bn_feature_matrix, self.c_bn_feature_matrix)
         matrix, matches, start_end_data, paths = sp.main()
 
-
-        #matrix = np.flipud(matrix)
+        # matrix = np.flipud(matrix)
         print matches
         print len(matches)
 

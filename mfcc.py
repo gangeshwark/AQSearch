@@ -8,15 +8,14 @@ import matplotlib.pyplot as plt
 from bob import ap
 import sys
 
-class FeatureExtractor():
 
+class FeatureExtractor:
     def __init__(self):
         pass
 
     def mfcc(self, path):
         # wave_path = '/home/gangeshwark/PycharmProjects/AQSearch/data/my4Hellow.wav'
         wave_path = path
-
 
         rate, signal = scipy.io.wavfile.read(str(wave_path))
 
@@ -65,9 +64,9 @@ class FeatureExtractor():
         plt.show()
         """
         # Plot the features
-        #fig = plt.figure()
-        #ax = fig.gca(projection='3d')
-        #ax.plot_surface(mfcc, mfcc, mfcc)
+        # fig = plt.figure()
+        # ax = fig.gca(projection='3d')
+        # ax.plot_surface(mfcc, mfcc, mfcc)
         return mfcc
 
 

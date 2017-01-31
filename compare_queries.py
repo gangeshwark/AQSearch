@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-class Dummy():
+class Dummy:
     def __init__(self):
 
         self.q1_bn_feature_matrix = read_scp('outdir/bnf_hello1/raw_bnfea_fbank_pitch.1.scp')
@@ -62,7 +62,7 @@ class Dummy():
         newMin = -1
 
         for r in xrange(matrix.shape[0]):
-            #oldMin = np.amin(matrix[r])
+            # oldMin = np.amin(matrix[r])
             if r == 0:
                 oldMin = np.amin(matrix[0])
             else:

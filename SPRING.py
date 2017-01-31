@@ -6,7 +6,7 @@ a non-trivial problem regarding the quality of the matching process
 """
 
 
-class SPRING_DTW():
+class SPRING_DTW:
     def __init__(self, eps, q_mfcc, c_mfcc):
         # HERE DEFINE
         # 1)template consisting of numerical data points
@@ -126,7 +126,7 @@ class SPRING_DTW():
                     self.J_s = self.S_now[self.n - 1]
                     self.J_e = j + 1
                     print "REPORT: Distance " + str(self.d_rep) + " with a starting point of " + str(
-                     self.J_s) + " and ending at " + str(self.J_e)
+                        self.J_s) + " and ending at " + str(self.J_e)
 
             # Identify optimal subsequence
             for i in range(self.n):
