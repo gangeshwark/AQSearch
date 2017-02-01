@@ -1,4 +1,3 @@
-from mfcc import FeatureExtractor
 from SPRING import SPRING_DTW
 import numpy as np
 from readArk import read_scp
@@ -115,15 +114,6 @@ class AQSearch:
             plt.plot(path_xs[x], path_ys[x])
         plt.show()
 
-        """
-        for (i, j), z in np.ndenumerate(temp):
-            if i == 0:
-                ax.text(j, i, '{:0.1f}'.format(z), ha='center', va='center')
-        """
-
-        import pyaudio
-        import wave
-        import sys
 
 
 if __name__ == '__main__':

@@ -79,28 +79,22 @@ class SPRING_DTW:
         return starting_point_new
 
     def find_path(self, data):
-        x = data[1]
-        y = self.dist_matrix.shape[0]
-        path = [[x, y]]
-        i = y - 1
-        j = x - 1
+        j = data[1]
+        i = self.dist_matrix.shape[0]
+        path = [[j, i]]
+        i -= 1
+        j -= 1
         while i > 0 and j > 0:
-            if i == 0:
-                j -= 1
-            elif j == 0:
+            if self.dist_matrix[i - 1, j] == min(self.dist_matrix[i - 1, j - 1], self.dist_matrix[i - 1, j],
+                                                 self.dist_matrix[i, j - 1]):
                 i -= 1
+            elif self.dist_matrix[i, j - 1] == min(self.dist_matrix[i - 1, j - 1], self.dist_matrix[i - 1, j],
+                                                   self.dist_matrix[i, j - 1]):
+                j -= 1
             else:
-                if self.dist_matrix[i - 1, j] == min(self.dist_matrix[i - 1, j - 1], self.dist_matrix[i - 1, j],
-                                                     self.dist_matrix[i, j - 1]):
-                    i -= 1
-                elif self.dist_matrix[i, j - 1] == min(self.dist_matrix[i - 1, j - 1], self.dist_matrix[i - 1, j],
-                                                       self.dist_matrix[i, j - 1]):
-                    j -= 1
-                else:
-                    i -= 1
-                    j -= 1
+                i -= 1
+                j -= 1
             path.append([j, i])
-        path.append([data[0], 0])
         return path
 
     def find_all_paths(self, ):
