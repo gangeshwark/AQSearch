@@ -1,5 +1,5 @@
 # AQSearch
-(Audio Query Search)
+**(Audio Query Search)**<br />
 Library to search for a query word (audio format) in a huge corpus audio file.
 
 ### Running
