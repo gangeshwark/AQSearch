@@ -1,5 +1,6 @@
-import ark
 import sys
+
+import ark
 
 
 def read_scp(scpFile):

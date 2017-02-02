@@ -1,7 +1,8 @@
-from SPRING import SPRING_DTW
-import numpy as np
-from readArk import read_scp
 import matplotlib.pyplot as plt
+import numpy as np
+
+from SPRING import SPRING_DTW
+from src.readArk import read_scp
 
 
 # for euclidean distance of 2 vectors, use dist = numpy.linalg.norm(a-b)

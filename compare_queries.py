@@ -9,10 +9,11 @@ Approach:
 3. Map the features of these queries and take the mean value of the features in the mapped frame.
 4. Similarly find variance matrix
 """
-from SPRING import SPRING_DTW
-from readArk import read_scp
 import matplotlib.pyplot as plt
 import numpy as np
+
+from SPRING import SPRING_DTW
+from src.readArk import read_scp
 
 
 class Dummy:
