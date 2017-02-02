@@ -1,22 +1,11 @@
 import sys
-
 import ark
 
 
-def read_scp(scpFile):
-    arkReader = ark.ArkReader(scpFile)
-    for key in arkReader.scp_data:
-        in_matr = arkReader.read_utt_data(key)
-        print ("utt = " + key + ", Input mat size = " + str(in_matr.shape[0]) + " rows and " + str(
-            in_matr.shape[1]) + " columns")
-
-        """
-        for i in range(in_matr.shape[0]):
-            sys.stdout.write("\n")
-            for j in range(in_matr.shape[1]):
-                sys.stdout.write(str(in_matr[i][j]) + " ")
-        """
-
+def read_scp(scp_file):
+    ark_reader = ark.ArkReader(scp_file)
+    for key in ark_reader.scp_data:
+        in_matr = ark_reader.read_utt_data(key)
         return in_matr
 
 

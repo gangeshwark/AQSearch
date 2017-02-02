@@ -4,7 +4,8 @@
 template = [1, 2, 0, 1, 2]
 stream = [1, 1, 0, 1, 2, 3, 1, 0, 1, 2, 1, 1, 1, 2, 7, 4, 5]
 
-# the threshold for the matching process has to be chosen by the user - yet in reality the choice of threshold is a non-trivial problem regarding the quality of the matching process
+# the threshold for the matching process has to be chosen by the user -
+# yet in reality the choice of threshold is a non-trivial problem regarding the quality of the matching process
 # Getting Epsilon from the user
 epsilon = input("Please define epsilon: ")
 epsilon = float(epsilon)
@@ -26,30 +27,30 @@ matches = []
 
 
 # calculation of accumulated distance for each incoming value
-def accdist_calc(incoming_value, template, Distance_new, Distance_recent):
+def accdist_calc(incoming_value, template, distance_new, distance_recent):
     for i in range(len(template)):
         if i == 0:
-            Distance_new[i] = abs(incoming_value - template[i])
+            distance_new[i] = abs(incoming_value - template[i])
         else:
-            Distance_new[i] = abs(incoming_value - template[i]) + min(Distance_new[i - 1], Distance_recent[i],
-                                                                      Distance_recent[i - 1])
-    return Distance_new
+            distance_new[i] = abs(incoming_value - template[i]) + min(distance_new[i - 1], distance_recent[i],
+                                                                      distance_recent[i - 1])
+    return distance_new
 
 
 # deduce starting point for each incoming value
-def startingpoint_calc(template_length, starting_point_recent, starting_point_new, Distance_new, Distance_recent):
+def startingpoint_calc(template_length, starting_point_recent, starting_point_new, distance_new, distance_recent):
     for i in range(template_length):
         if i == 0:
             # here j+1 instead of j, because of the programm counting from 0 instead of from 1
             starting_point_new[i] = j + 1
         else:
-            if Distance_new[i - 1] == min(Distance_new[i - 1], Distance_recent[i], Distance_recent[i - 1]):
+            if distance_new[i - 1] == min(distance_new[i - 1], distance_recent[i], distance_recent[i - 1]):
                 starting_point_new[i] = starting_point_new[i - 1]
 
-            elif Distance_recent[i] == min(Distance_new[i - 1], Distance_recent[i], Distance_recent[i - 1]):
+            elif distance_recent[i] == min(distance_new[i - 1], distance_recent[i], distance_recent[i - 1]):
                 starting_point_new[i] = starting_point_recent[i]
 
-            elif Distance_recent[i - 1] == min(Distance_new[i - 1], Distance_recent[i], Distance_recent[i - 1]):
+            elif distance_recent[i - 1] == min(distance_new[i - 1], distance_recent[i], distance_recent[i - 1]):
                 starting_point_new[i] = starting_point_recent[i - 1]
     return starting_point_new
 
@@ -73,7 +74,7 @@ for j in range(len(stream)):
     # Identify optimal subsequence
     for i in range(n):
         if D_now[i] >= d_rep or S_now[i] > J_e:
-            check = check + 1
+            check += 1
     if check == n:
         print "MATCH: Distance " + str(d_rep) + " with a starting point of " + str(J_s) + " and ending at " + str(J_e)
         matches.append(str(d_rep) + "," + str(J_s) + "," + str(J_e))

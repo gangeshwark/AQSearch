@@ -12,11 +12,11 @@ Approach:
 import matplotlib.pyplot as plt
 import numpy as np
 
-from SPRING import SPRING_DTW
+from SPRING import SpringDTW
 from src.readArk import read_scp
 
 
-class Dummy:
+class CompareQueries:
     def __init__(self):
 
         self.q1_bn_feature_matrix = read_scp('outdir/bnf_hello1/raw_bnfea_fbank_pitch.1.scp')
@@ -33,7 +33,8 @@ class Dummy:
                               self.q6_bn_feature_matrix]
         self.n = len(self.feature_array)  # no of query samples
 
-    def frame_length(self, matrix):
+    @staticmethod
+    def frame_length(matrix):
         """
         Function to return the number of frames in a feature matrix.
         """
@@ -57,22 +58,22 @@ class Dummy:
 
         return x
 
-    def change_range(self, matrix):
-        newMatrix = np.ndarray(shape=matrix.shape)
-        newMax = 1
-        newMin = -1
-
+    @staticmethod
+    def change_range(matrix):
+        """
+        Change the range of the values in the matrix by maintaining the ratio
+        :param matrix: The matrix to change the range
+        :return: the new matrix after changing the range
+        """
+        new_matrix = np.ndarray(shape=matrix.shape)
+        new_max = 1000
+        new_min = 0
         for r in xrange(matrix.shape[0]):
-            # oldMin = np.amin(matrix[r])
-            if r == 0:
-                oldMin = np.amin(matrix[0])
-            else:
-                oldMin = np.amin(matrix[max(0, r - 40):r])
-            oldMax = np.amax(matrix[r])
+            old_min = np.amin(matrix[0]) if r == 0 else np.amin(matrix[max(0, r - 40):r])
+            old_max = np.amax(matrix[r])
             for c in xrange(matrix.shape[1]):
-                newMatrix[r][c] = (((matrix[r][c] - oldMin) * (newMax - newMin)) / (oldMax - oldMin)) + newMin
-
-        return newMatrix
+                new_matrix[r][c] = (((matrix[r][c] - old_min) * (new_max - new_min)) / (old_max - old_min)) + new_min
+        return new_matrix
 
     def build_mean_matrix(self):
         # 1. Find the median matrix
@@ -85,8 +86,8 @@ class Dummy:
             print "\nPerforming DTW on features of %d and %d" % (median_matrix, x)
             # if x == median_matrix:
             # continue
-            sp = SPRING_DTW(2000, self.feature_array[x], self.feature_array[median_matrix])
-            matrix, matches, start_end_data, paths = sp.main()
+            sp = SpringDTW(2000, self.feature_array[x], self.feature_array[median_matrix])
+            matrix, matches, start_end_data, paths = sp.perform_dtw()
             print matches
             # matrix = np.flipud(matrix)
             matrix = self.change_range(matrix)
@@ -107,8 +108,8 @@ class Dummy:
                 path_ys.append(path_y)
 
             print len(path_xs), len(path_ys)
-            for x in xrange(len(path_xs)):
-                plt.plot(path_xs[x], path_ys[x])
+            for y in xrange(len(path_xs)):
+                plt.plot(path_xs[y], path_ys[y])
             plt.show()
 
             for p in start_end_data:
@@ -116,5 +117,5 @@ class Dummy:
 
 
 if __name__ == '__main__':
-    d = Dummy()
+    d = CompareQueries()
     d.build_mean_matrix()

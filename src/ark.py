@@ -1,5 +1,5 @@
-##@package ark 
-#contains the .ark io functionality
+# @package ark
+# contains the .ark io functionality
 
 # Copyright 2014    Yajie Miao    Carnegie Mellon University
 #           2015    Yun Wang      Carnegie Mellon University
@@ -18,61 +18,63 @@
 # limitations under the License.
 
 import numpy as np
+
 np.set_printoptions(threshold=np.nan)
 np.set_printoptions(linewidth=np.nan)
 import struct
 
-	
+
 ## Class to read Kaldi ark format. Each time, it reads one line of the .scp file and reads in the corresponding features into a numpy matrix. It only supports binary-formatted .ark files. Text and compressed .ark files are not supported. The inspiration for this class came from pdnn toolkit (see licence at the top of this file)(https://github.com/yajiemiao/pdnn)
 class ArkReader(object):
-	
-	##ArkReader constructor
-	#@param scp_path path to the .scp file
-	def __init__(self, scp_path):
-	
-		self.scp_position = 0
-		fin = open(scp_path,"r")
-		#self.utt_ids = []
-		self.scp_data = {}
-		line = fin.readline()
-		while line != '' and line != None:
-			utt_id, path_pos = line.replace('\n','').split(' ')
-			path, pos = path_pos.split(':')
-			#self.utt_ids.append(utt_id)
-			self.scp_data[utt_id] = [path, pos]
-			line = fin.readline()
+    ##ArkReader constructor
+    # @param scp_path path to the .scp file
+    def __init__(self, scp_path):
 
-		fin.close()
-		
-	## read data from the archive
-	#@param index index of the utterance that will be read
-	#@return a numpy array containing the data from the utterance
-	def read_utt_data(self, uttName):
-		ark_read_buffer = open(self.scp_data[uttName][0], 'rb')
-		ark_read_buffer.seek(int(self.scp_data[uttName][1]),0)
-		header = struct.unpack('<xcccc', ark_read_buffer.read(5))
-		if header[0].decode("utf-8") != "B": # Tung comment: old code header[0] != "B"
-			print ("Input .ark file is not binary! The header is " + header[0].decode("utf-8")); exit(1)
-		if header[1] == "C":
-			print ("Input .ark file is compressed"); exit(1)
+        self.scp_position = 0
+        fin = open(scp_path, "r")
+        # self.utt_ids = []
+        self.scp_data = {}
+        line = fin.readline()
+        while line != '' and line is not None:
+            utt_id, path_pos = line.replace('\n', '').split(' ')
+            path, pos = path_pos.split(':')
+            # self.utt_ids.append(utt_id)
+            self.scp_data[utt_id] = [path, pos]
+            line = fin.readline()
 
-		rows = 0; cols= 0
-		m, rows = struct.unpack('<bi', ark_read_buffer.read(5))
-		n, cols = struct.unpack('<bi', ark_read_buffer.read(5))
-		#print ("Header 1 = " + header[1].decode("utf-8") + ", rows = " + str(rows) + ", column = " + str(cols))
+        fin.close()
 
-		if header[1].decode("utf-8") == "F": # Tung comment: old code header[1] == "F"
-			tmp_mat = np.frombuffer(ark_read_buffer.read(rows * cols * 4), dtype=np.float32)
-		elif header[1].decode("utf-8") == "D": # Tung comment: old code header[1] == "D"
-			tmp_mat = np.frombuffer(ark_read_buffer.read(rows * cols * 8), dtype=np.float64)
-			
-		utt_mat = np.reshape(tmp_mat, (rows, cols))
+    ## read data from the archive
+    # @param index index of the utterance that will be read
+    # @return a numpy array containing the data from the utterance
+    def read_utt_data(self, utt_name):
+        ark_read_buffer = open(self.scp_data[utt_name][0], 'rb')
+        ark_read_buffer.seek(int(self.scp_data[utt_name][1]), 0)
+        header = struct.unpack('<xcccc', ark_read_buffer.read(5))
+        if header[0].decode("utf-8") != "B":  # Tung comment: old code header[0] != "B"
+            print ("Input .ark file is not binary! The header is " + header[0].decode("utf-8"))
+            exit(1)
+        if header[1] == "C":
+            print ("Input .ark file is compressed")
+            exit(1)
 
-		ark_read_buffer.close()
-		
-		return utt_mat
+        m, rows = struct.unpack('<bi', ark_read_buffer.read(5))
+        n, cols = struct.unpack('<bi', ark_read_buffer.read(5))
+        # print ("Header 1 = " + header[1].decode("utf-8") + ", rows = " + str(rows) + ", column = " + str(cols))
 
-'''	
+        if header[1].decode("utf-8") == "F":  # Tung comment: old code header[1] == "F"
+            tmp_mat = np.frombuffer(ark_read_buffer.read(rows * cols * 4), dtype=np.float32)
+        elif header[1].decode("utf-8") == "D":  # Tung comment: old code header[1] == "D"
+            tmp_mat = np.frombuffer(ark_read_buffer.read(rows * cols * 8), dtype=np.float64)
+
+        utt_mat = np.reshape(tmp_mat, (rows, cols))
+
+        ark_read_buffer.close()
+
+        return utt_mat
+
+
+'''
 	## read the next utterance in the scp file
 	#@return the utterance ID of the utterance that was read, the utterance data, bool that is true if the reader looped back to the beginning
 	def read_next_utt(self):
@@ -155,4 +157,4 @@ class ArkWriter(object):
 	##close the ark writer
 	def close(self):
 		self.scp_file_write.close()
-'''		
+'''
