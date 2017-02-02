@@ -22,6 +22,7 @@ class AQSearch:
         sp = SPRING_DTW(220, self.q_mfcc_feature_matrix, self.c_mfcc_feature_matrix)
         matrix, matches = sp.main()
 
+
         print matches
         print len(matches)
         print matrix, matrix.shape
