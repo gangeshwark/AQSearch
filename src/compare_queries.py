@@ -12,7 +12,7 @@ Approach:
 import matplotlib.pyplot as plt
 import numpy as np
 
-from SPRING import SpringDTW
+from spring import SpringDTW
 from src.readArk import read_scp
 
 

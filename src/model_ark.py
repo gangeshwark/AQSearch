@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from src.SPRING import SpringDTW
+from src.spring import SpringDTW
 from src.readArk import read_scp
 
 

@@ -1,5 +1,5 @@
 from mfcc import FeatureExtractor
-from SPRING import SpringDTW
+from spring import SpringDTW
 import numpy as np
 import matplotlib.pyplot as plt
 
