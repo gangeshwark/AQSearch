@@ -46,7 +46,6 @@ class CompareQueries:
             m.append(self.frame_length(self.feature_array[x]))
 
         m.sort()
-        print m
         if self.n % 2 == 0:
             val = m[self.n / 2]
         else:
@@ -78,17 +77,14 @@ class CompareQueries:
     def build_mean_matrix(self):
         # 1. Find the median matrix
         median_matrix = self.median()
-        print median_matrix
+        print "Median Matrix: {0}".format(median_matrix)
 
         # 2. find dtw of the median matrix with others
-
         for x in xrange(self.n):
             print "\nPerforming DTW on features of %d and %d" % (median_matrix, x)
-            # if x == median_matrix:
-            # continue
+
             sp = SpringDTW(2000, self.feature_array[x], self.feature_array[median_matrix])
             matrix, matches, start_end_data, paths = sp.perform_dtw()
-            print matches
             # matrix = np.flipud(matrix)
             matrix = self.change_range(matrix)
             # Plot heat map
@@ -97,7 +93,6 @@ class CompareQueries:
             path_xs = []
             path_ys = []
             for path in paths:
-                print path
                 path_x = []
                 path_y = []
                 for point in path:
@@ -107,13 +102,9 @@ class CompareQueries:
                 path_xs.append(path_x)
                 path_ys.append(path_y)
 
-            print len(path_xs), len(path_ys)
             for y in xrange(len(path_xs)):
                 plt.plot(path_xs[y], path_ys[y])
             plt.show()
-
-            for p in start_end_data:
-                print p[0], p[1]
 
 
 if __name__ == '__main__':
