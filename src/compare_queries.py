@@ -12,7 +12,8 @@ Approach:
 import matplotlib.pyplot as plt
 import numpy as np
 
-from spring import SpringDTW
+from class_spring import Test_Spring
+from spring_new import SpringDTW
 from src.readArk import read_scp
 
 
@@ -83,8 +84,9 @@ class CompareQueries:
         for x in xrange(self.n):
             print "\nPerforming DTW on features of %d and %d" % (median_matrix, x)
 
-            sp = SpringDTW(2000, self.feature_array[x], self.feature_array[median_matrix])
-            matrix, matches, start_end_data, paths = sp.perform_dtw()
+            sp = SpringDTW(27, self.feature_array[x], self.feature_array[median_matrix])
+            sp.perform_dtw()
+            """
             # matrix = np.flipud(matrix)
             matrix = self.change_range(matrix)
             # Plot heat map
@@ -105,6 +107,7 @@ class CompareQueries:
             for y in xrange(len(path_xs)):
                 plt.plot(path_xs[y], path_ys[y])
             plt.show()
+            """
 
 
 if __name__ == '__main__':

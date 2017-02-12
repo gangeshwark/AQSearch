@@ -1,14 +1,19 @@
+import numpy as np
+import matplotlib.pyplot as plt
 # HERE DEFINE
 # 1)template consisting of numerical data points
 # 2)stream consisting of numerical data points
 template = [1, 2, 0, 1, 2]
 stream = [1, 1, 0, 1, 2, 3, 1, 0, 1, 2, 1, 1, 1, 2, 7, 4, 5]
 
+#template = [11, 6, 9, 4]
+#stream = [5, 12, 6, 10, 6, 5, 13]
+
 # the threshold for the matching process has to be chosen by the user -
 # yet in reality the choice of threshold is a non-trivial problem regarding the quality of the matching process
 # Getting Epsilon from the user
-epsilon = input("Please define epsilon: ")
-epsilon = float(epsilon)
+#epsilon = input("Please define epsilon: ")
+epsilon = float(15)
 
 # SPRING
 # 1.Requirements
@@ -24,16 +29,19 @@ check = 0
 
 # check/output
 matches = []
+dist_matrix = np.ndarray(shape=(len(template), len(stream)), dtype=float)
 
 
 # calculation of accumulated distance for each incoming value
-def accdist_calc(incoming_value, template, distance_new, distance_recent):
+def accdist_calc(incoming_value, template, distance_new, distance_recent, j):
     for i in range(len(template)):
         if i == 0:
-            distance_new[i] = abs(incoming_value - template[i])
+            distance_new[i] = abs(incoming_value - template[i])**2
+            dist_matrix[i][j] = distance_new[i]
         else:
-            distance_new[i] = abs(incoming_value - template[i]) + min(distance_new[i - 1], distance_recent[i],
+            distance_new[i] = abs(incoming_value - template[i])**2 + min(distance_new[i - 1], distance_recent[i],
                                                                       distance_recent[i - 1])
+            dist_matrix[i][j] = distance_new[i]
     return distance_new
 
 
@@ -54,12 +62,12 @@ def startingpoint_calc(template_length, starting_point_recent, starting_point_ne
                 starting_point_new[i] = starting_point_recent[i - 1]
     return starting_point_new
 
-
+j = 0
 # 2.Calculation for each incoming point x.t - simulated here by simply calculating along the given static list
 for j in range(len(stream)):
 
     x = stream[j]
-    accdist_calc(x, template, D_now, D_recent)
+    accdist_calc(x, template, D_now, D_recent, j)
     startingpoint_calc(n, S_recent, S_now, D_now, D_recent)
 
     # Report any matching subsequence
@@ -84,10 +92,15 @@ for j in range(len(stream)):
         check = 0
     else:
         check = 0
-
     # define the recently calculated distance vector as "old" distance
     for i in range(n):
         D_recent[i] = D_now[i]
         S_recent[i] = S_now[i]
 
     print matches
+
+print dist_matrix
+
+
+plt.matshow(dist_matrix, cmap=plt.cm.RdGy)
+plt.show()

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualize the Audio File</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <!-- main wavesurfer.js lib -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.2.3/wavesurfer.min.js"></script>
+
+    <!-- wavesurfer.js timeline -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.2.3/plugin/wavesurfer.timeline.min.js"></script>
+
+
+</head>
+<body>
+<h1>Visualization Demo</h1>
+<div id="waveform"></div>
+<div id="waveform-timeline"></div>
+
+
+<span id="current">--:--</span>/<span id="total">--:--</span>
+
+
+<div style="text-align: center">
+    <button class="btn btn-primary" onclick="wavesurfer.playPause()">
+        <i class="glyphicon glyphicon-play"></i>
+        Play/Pause
+    </button>
+    <div><span onclick="wavesurfer.play(0.30,0.80)">00:00:00:20 - 00:00:00:80</span></div>
+
+    <p class="row">
+    <div class="col-xs-1">
+        <i class="glyphicon glyphicon-zoom-in"></i>
+    </div>
+
+    <div class="col-xs-10">
+        <input id="slider" type="range" min="1" max="10" value="1" style=" width: auto"/>
+    </div>
+
+    <div class="col-xs-1">
+        <i class="glyphicon glyphicon-zoom-out"></i>
+    </div>
+    </p>
+</div>
+<script>
+    var timer = 0;
+    // Format time in minutes:seconds
+    function formatTimeWithMilli(time) {
+        time = time * 1000; //convert into milliseconds
+        var hour = Math.floor(time / (60 * 1000 * 60)),
+            minutes = Math.floor(time / (1000 * 60)),
+            seconds = Math.floor((time / 1000) % 60),
+            milli = Math.floor((time - (seconds * 1000))/10);
+
+        hour = hour < 10 ? '0' + hour : hour;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        milli = milli < 10 ? '0' + milli : milli;
+        return hour + ":" + minutes + ":" + seconds + ":" + milli;
+    }
+    function formatTime(time) {
+        time = time * 1000; //convert into milliseconds
+        var hour = Math.floor(time / (60 * 1000 * 60)),
+            minutes = Math.floor(time / (1000 * 60)),
+            seconds = Math.floor((time / 1000) % 60);
+
+        hour = hour < 10 ? '0' + hour : hour;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        return hour + ":" + minutes + ":" + seconds;
+    }
+    var wavesurfer = WaveSurfer.create({
+        container: '#waveform',
+        waveColor: 'red',
+        progressColor: 'purple',
+        height: 128,
+        maxCanvasWidth: 128,
+        backend: 'MediaElement',
+        //splitChannels: true
+    });
+    //wavesurfer.load('../data/my4Hellow.wav');
+    wavesurfer.load('client/The Chainsmokers - Closer (feat. Halsey).mp3');
+    //wavesurfer.load('http://rnb-live.wapka.me/music/down/47048909/2012991/MjQ0OXNuOExWTktHWk9BMVByOHZsUFJlb001UTh3WTFla2dpNmxmN0lkT3ZFL2pkV3c=/The+Chainsmokers+-+Closer+%28feat.+Halsey%29.mp3');
+
+
+    var slider = document.querySelector('#slider');
+
+    slider.oninput = function () {
+        var zoomLevel = Number(slider.value);
+        wavesurfer.zoom(zoomLevel);
+    };
+
+    wavesurfer.on('ready', function () {
+        var duration = wavesurfer.getDuration();
+        // Show duration of track.
+        $('#current').text('00:00:00:00');
+        $('#total').text(formatTime(duration));
+        wavesurfer.play();
+
+        // Show the progress of the track in time.
+        clearInterval(timer);
+        timer = setInterval(function () {
+            $('#current').text(formatTime(wavesurfer.getCurrentTime()));
+        }, 1000);
+
+        var timeline = Object.create(WaveSurfer.Timeline);
+
+        timeline.init({
+            wavesurfer: wavesurfer,
+            container: '#waveform-timeline'
+        });
+    });
+
+</script>
+</body>
+
+</html>

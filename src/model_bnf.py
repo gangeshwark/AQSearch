@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
+import plotly as py
+import plotly.graph_objs as go
 import numpy as np
-from src.spring import SpringDTW
+from src.spring_new import SpringDTW
 from src.readArk import read_scp
 
 
@@ -38,6 +40,23 @@ class AQSearch:
                 new_matrix[r][c] = (((matrix[r][c] - old_min) * (new_max - new_min)) / (old_max - old_min)) + new_min
         return new_matrix
 
+    def plot_plotly(self, matrix, path_xs, path_ys, paths):
+        data = [
+            go.Heatmap(
+                z=matrix
+            ),
+
+        ]
+        for path in paths:
+            data.append(
+                go.Scatter(
+                    x=path[0],
+                    y=path[1],
+                    marker=dict(color="rgb(16, 32, 77)")
+                ))
+        print data
+        py.offline.plot(data, filename='TESTFILE')
+
     def plot_distance(self, matrix, path_xs, path_ys):
         """
         Plots the distance matrix
@@ -46,8 +65,8 @@ class AQSearch:
         :param path_ys: The y co-ordinate values of the path
         :return: None
         """
-        fig, ax = plt.subplots()
-        ax.matshow(matrix, cmap=plt.cm.RdGy)
+        # fig = plt.figure()
+        plt.matshow(matrix, cmap=plt.cm.RdGy)
         plt.show()
 
         plt.figure(1)
@@ -55,12 +74,12 @@ class AQSearch:
         plt.plot(matrix[0], 'r-', matrix[50], 'b--', matrix[56], 'g-')
 
         plt.subplot(212)
-        matrix = self.change_range(matrix)
+        # matrix = self.change_range(matrix)
         plt.plot(matrix[0], 'r-', matrix[50], 'b--', matrix[56], 'g-')
 
         plt.show()
-        fig, ax = plt.subplots()
-        ax.matshow(matrix, cmap=plt.cm.RdGy)
+        # fig, ax = plt.subplots()
+        plt.matshow(matrix, cmap=plt.cm.RdGy)
         for x in xrange(len(path_xs)):
             plt.plot(path_xs[x], path_ys[x])
         plt.show()
@@ -82,11 +101,14 @@ class AQSearch:
         """
         path_xs = []
         path_ys = []
-        self.c_bn_feature_matrix = read_scp('outdir/bnf_allhello/raw_bnfea_fbank_pitch.1.scp')
-        self.q_bn_feature_matrix = read_scp('outdir/bnf_hello1/raw_bnfea_fbank_pitch.1.scp')
+        self.c_bn_feature_matrix = read_scp('outdir/bnf_database/raw_bnfea_fbank_pitch.1.scp')
+        self.q_bn_feature_matrix = read_scp('outdir/bnf_query/raw_bnfea_fbank_pitch.1.scp')
+        print self.c_bn_feature_matrix.shape
+        print self.q_bn_feature_matrix.shape
         sp = SpringDTW(1000, self.q_bn_feature_matrix, self.c_bn_feature_matrix)
         matrix, matches, start_end_data, paths = sp.perform_dtw()
-        matrix = self.flip(matrix)
+        sp.accdist_calc_v2()
+        # matrix = self.flip(matrix)
         for path in paths:
             path_x = []
             path_y = []
@@ -97,6 +119,7 @@ class AQSearch:
             path_ys.append(path_y)
 
         self.plot_distance(matrix, path_xs, path_ys)
+        # self.plot_plotly(matrix, path_xs, path_ys, path)
 
 
 if __name__ == '__main__':
