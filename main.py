@@ -7,6 +7,8 @@ help = """
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--feature", help=help, nargs='?', required=True)
+parser.add_argument("-q", "--query", help=help, nargs='?', required=False)
+parser.add_argument("-c", "--corpus", help=help, nargs='?', required=False)
 args = parser.parse_args()
 
 if __name__ == '__main__':
@@ -19,7 +21,10 @@ if __name__ == '__main__':
 
     elif args.feature == 'bnf':
         print "Performing DTW on Bottle Neck Features"
-        AQS = model_bnf.AQSearch()
+        q_path = args.query
+        c_path = args.corpus
+        AQS = model_bnf.AQSearch(q_path, c_path)
+
         AQS.search()
 
     elif args.feature == 'compare':

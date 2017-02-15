@@ -1,4 +1,5 @@
 import numpy as np
+import time
 from scipy import spatial
 
 from src.readArk import read_scp
@@ -35,6 +36,7 @@ class SpringDTW:
         self.matches = []
         self.start_end_dist_data = []
         self.dist_matrix = np.ndarray(shape=(self.template.shape[0], self.stream.shape[0]), dtype=float)
+        print "Old SPRING"
 
     # calculation of accumulated distance for each incoming value
     def accdist_calc(self, incoming_value, template, distance_new, distance_recent, j):
@@ -51,15 +53,16 @@ class SpringDTW:
         # for eculidean distance of 2 vectors, use dist = np.linalg.norm(a-b)
         for i in range(len(template)):
             if i == 0:
-                distance_new[i] = abs(incoming_value - template[i])**2
-                #distance_new[i] = np.linalg.norm(incoming_value - template[i])
-                #distance_new[i] = spatial.distance.cosine(incoming_value, template[i])
+                # distance_new[i] = abs(incoming_value - template[i])**2
+                # distance_new[i] = np.linalg.norm(incoming_value - template[i])
+                distance_new[i] = spatial.distance.cosine(incoming_value, template[i])
 
                 self.dist_matrix[i][j] = distance_new[i]
             else:
-                distance_new[i] = abs(incoming_value - template[i])**2 + min(distance_new[i - 1],
-                                                                                             distance_recent[i],
-                                                                                             distance_recent[i - 1])
+                distance_new[i] = spatial.distance.cosine(incoming_value, template[i]) + min(
+                    distance_new[i - 1],
+                    distance_recent[i],
+                    distance_recent[i - 1])
                 self.dist_matrix[i][j] = distance_new[i]
 
         return distance_new
@@ -163,6 +166,7 @@ class SpringDTW:
                 """
                 # self.matches.append(str(self.d_rep) + "," + str(self.J_s) + "," + str(self.J_e))
                 self.matches.append([self.J_s, self.J_e, self.d_rep])
+                self.find_start_end([self.J_s, self.J_e, self.d_rep])
                 self.d_rep = float("inf")
                 self.J_s = float("inf")
                 self.J_e = float("inf")
@@ -173,19 +177,40 @@ class SpringDTW:
             for i in range(self.n):
                 self.D_recent[i] = self.D_now[i]
                 self.S_recent[i] = self.S_now[i]
-        for (x, y, z) in self.matches:
-            hypo = np.sqrt(np.square(y-x)+np.square(self.dist_matrix.shape[0]))
+        """for (x, y, z) in self.matches:
+            hypo = np.sqrt(np.square(y - x) + np.square(self.dist_matrix.shape[0]))
             norm_dist = z / hypo
             if norm_dist <= float("inf"):
                 print norm_dist, x, y
                 self.start_end_dist_data.append([x, y, norm_dist])
-        print self.start_end_dist_data
-        print self.matches
-        return self.dist_matrix, self.matches, self.start_end_dist_data, self.find_all_paths()
+        """
+
+        print "DTW Done!"
+        self.top_k_data = self.top_K(k=20)
+        paths = []
+        return self.dist_matrix, self.matches, self.start_end_dist_data, paths, self.top_k_data
+
+    def top_K(self, k=20):
+        self.start_end_dist_data.sort(key=lambda x: x[2])
+        return self.start_end_dist_data[:k]
+
+    # optimize this function
+    def find_start_end(self, new_data):
+        if len(self.start_end_dist_data) == 0:
+            self.start_end_dist_data.append(new_data)
+            return
+
+        if self.start_end_dist_data[-1][0] == new_data[0]:
+            if self.start_end_dist_data[-1][2] >= new_data[2]:
+                self.start_end_dist_data.pop()
+                self.start_end_dist_data.append(new_data)
+
+        else:
+            self.start_end_dist_data.append(new_data)
 
 
 if __name__ == '__main__':
-    test = 1
+    test = 0
     if test:
         q_bn_feature_matrix = np.array([11, 6, 9, 4])
         c_bn_feature_matrix = np.array([5, 12, 6, 10, 6, 5, 13])
@@ -194,5 +219,8 @@ if __name__ == '__main__':
         q_bn_feature_matrix = read_scp('outdir/bnf_query/raw_bnfea_fbank_pitch.1.scp')
     eps = 30
     sp = SpringDTW(eps, q_bn_feature_matrix, c_bn_feature_matrix)
+    st = time.time()
     a, b, c, d = sp.perform_dtw()
-    print a
+    et = time.time()
+    print "%s seconds" % (et-st)
+    #print a

@@ -26,8 +26,13 @@
         <i class="glyphicon glyphicon-play"></i>
         Play/Pause
     </button>
-    <div><span onclick="wavesurfer.play(0.30,0.80)">00:00:00:20 - 00:00:00:80</span></div>
+    <div><span onclick="wavesurfer.play(1.30,0.80)">00:00:00:20 - 00:00:00:80</span></div>
 
+    <input type="text" name="time_in" id = "time_in">
+    <button class="btn btn-primary" onclick="callplay();">
+        <i class="glyphicon glyphicon-play"></i>
+        Play/Pause
+    </button>
     <p class="row">
     <div class="col-xs-1">
         <i class="glyphicon glyphicon-zoom-in"></i>
@@ -43,6 +48,13 @@
     </p>
 </div>
 <script>
+    function callplay() {
+        var time_in = document.getElementById('time_in').value;
+        console.log(parseFloat(time_in));
+        //var arr = time_in.match(/^.*-.*$/g);
+        //console.log(arr[0]);
+        wavesurfer.play(parseFloat(time_in));
+    }
     var timer = 0;
     // Format time in minutes:seconds
     function formatTimeWithMilli(time) {
@@ -79,7 +91,7 @@
         //splitChannels: true
     });
     //wavesurfer.load('../data/my4Hellow.wav');
-    wavesurfer.load('client/The Chainsmokers - Closer (feat. Halsey).mp3');
+    wavesurfer.load('client/110101_000444.WAV');
     //wavesurfer.load('http://rnb-live.wapka.me/music/down/47048909/2012991/MjQ0OXNuOExWTktHWk9BMVByOHZsUFJlb001UTh3WTFla2dpNmxmN0lkT3ZFL2pkV3c=/The+Chainsmokers+-+Closer+%28feat.+Halsey%29.mp3');
 
 

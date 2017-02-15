@@ -36,10 +36,12 @@ class SpringDTW:
         # output variables
         self.matches = []
         self.start_end_dist = []
+        self.top_k_data = []
         self.all_start_end_dist = []
 
         self.dist_matrix = np.ndarray(shape=(self.Y_query.shape[0], self.X_corpus.shape[0]), dtype=float)
         self.avg_dist_matrix = np.ndarray(shape=(self.Y_query.shape[0], self.X_corpus.shape[0]), dtype=float)
+        print "New SPRING"
 
     # optimize this function
     def find_start_end(self, new_data):
@@ -64,18 +66,15 @@ class SpringDTW:
         :return: start_end_dist_data: The start and end points
         :return: all_paths: All the paths for every start and end
         """
+
         print self.n, self.m
         for j in range(self.n):
             x_t = self.X_corpus[j]
             self.accdist_calc(x_t, self.Y_query, self.D_now, self.D_recent, j)
-
             self.startingpoint_calc(self.m, self.S_recent, self.S_now, self.D_now, self.D_recent, j)
             if self.d_min < self.epsilon:
-                # self.T_s = self.S_now[self.m - 1]
                 for i in xrange(self.m):
-
-                    if self.D_now[i] >= self.d_min or self.S_now[i] > self.T_e:
-
+                    if self.D_now[i] >= self.d_min or self.S_now[i] > self.T_e:# or i == self.m:
                         self.T_s = self.S_now[self.m - 1]
                         self.T_e = j - 1
                         """print "REPORT: Distance " + str(self.d_min) + " with a starting point of " + str(
@@ -95,15 +94,14 @@ class SpringDTW:
             for i in range(self.m):
                 self.D_recent[i] = self.D_now[i]
                 self.S_recent[i] = self.S_now[i]
-
-        for x in self.start_end_dist:
-            print x
-        # print self.all_start_end_dist
+        print "DTW Done!"
+        self.top_k_data = self.top_K(k=20)
         # self.dist_matrix = np.flipud(self.dist_matrix)
         # print self.dist_matrix
-
+        '''
         plt.matshow(self.dist_matrix, cmap=plt.cm.RdGy)
         plt.show()
+
         paths = self.find_all_paths()
         path_xs = []
         path_ys = []
@@ -120,16 +118,9 @@ class SpringDTW:
         for x in xrange(len(path_xs)):
             plt.plot(path_xs[x], path_ys[x])
         plt.show()
-
-        return self.dist_matrix, self.matches, self.start_end_dist, paths
-
-    def accdist_calc_v2(self):
-        dist_mat = np.ndarray(shape=(self.Y_query.shape[0], self.X_corpus.shape[0]), dtype=float)
-        for i in range(len(self.Y_query)):
-            for j in range(len(self.X_corpus)):
-                dist_mat[i][j] = abs(self.Y_query[i] - self.X_corpus[j]) ** 2
-        plt.matshow(dist_mat, cmap=plt.cm.RdGy)
-        plt.show()
+        '''
+        paths = []
+        return self.dist_matrix, self.matches, self.start_end_dist, paths, self.top_k_data
 
     # calculation of accumulated distance for each incoming value
     def accdist_calc(self, incoming_value, template, distance_new, distance_recent, j):
@@ -146,17 +137,16 @@ class SpringDTW:
         # for eculidean distance of 2 vectors, use dist = np.linalg.norm(a-b)
         for i in range(len(template)):
             if i == 0:
-                # distance_new[i] = np.linalg.norm(incoming_value - template[i])
+                # distance_new[i] = np.linalg.norm(incoming_value - template[i])**2
                 # distance_new[i] = abs(incoming_value - template[i]) ** 2
                 distance_new[i] = spatial.distance.cosine(incoming_value, template[i])
-
                 self.dist_matrix[i][j] = distance_new[i]
 
             else:
                 distance_new[i] = spatial.distance.cosine(incoming_value, template[i]) + \
-                                  min(distance_new[i - 1],
-                                      distance_recent[i],
-                                      distance_recent[i - 1])
+                                   min(distance_new[i - 1],
+                                       distance_recent[i],
+                                       distance_recent[i - 1])
 
                 self.dist_matrix[i][j] = distance_new[i]
         return distance_new
@@ -220,9 +210,13 @@ class SpringDTW:
         :return: paths
         """
         paths = []
-        for x in self.start_end_dist:
+        for x in self.top_k_data:
             paths.append(self.find_path(x))
         return paths
+
+    def top_K(self, k=20):
+        self.start_end_dist.sort(key=lambda x: x[2])
+        return self.start_end_dist[:k]
 
 
 if __name__ == '__main__':
@@ -231,6 +225,9 @@ if __name__ == '__main__':
     c_bn_feature_matrix = read_scp('outdir/bnf_database/raw_bnfea_fbank_pitch.1.scp')
     q_bn_feature_matrix = read_scp('outdir/bnf_query/raw_bnfea_fbank_pitch.1.scp')
 
-    eps = 27
+    eps = 45
     sp = SpringDTW(eps, q_bn_feature_matrix, c_bn_feature_matrix)
-    a, b, c, d = sp.perform_dtw()
+    a, b, c, d, e = sp.perform_dtw()
+    print len(e)
+    for x in e:
+        print x

@@ -4,7 +4,7 @@ import plotly.graph_objs as go
 import numpy as np
 from src.spring_new import SpringDTW
 from src.readArk import read_scp
-
+import time
 
 # TODO: class to play audio from a particular frame.
 class AudioPlay:
@@ -16,12 +16,14 @@ class AudioPlay:
 
 
 class AQSearch:
-    def __init__(self):
+    def __init__(self, q_feat_path, c_feat_path):
         """
         Initialize with the corpus audio file
         """
         self.c_bn_feature_matrix = 0
         self.q_bn_feature_matrix = 0
+        self.q_feat_path = q_feat_path
+        self.c_feat_path = c_feat_path
 
     @staticmethod
     def change_range(matrix):
@@ -101,13 +103,19 @@ class AQSearch:
         """
         path_xs = []
         path_ys = []
-        self.c_bn_feature_matrix = read_scp('outdir/bnf_database/raw_bnfea_fbank_pitch.1.scp')
-        self.q_bn_feature_matrix = read_scp('outdir/bnf_query/raw_bnfea_fbank_pitch.1.scp')
+        #self.c_feat_path = 'outdir/bnf_database/raw_bnfea_fbank_pitch.1.scp'
+        #self.q_feat_path = 'outdir/bnf_query/raw_bnfea_fbank_pitch.1.scp'
+        self.c_bn_feature_matrix = read_scp(self.c_feat_path)
+        self.q_bn_feature_matrix = read_scp(self.q_feat_path)
         print self.c_bn_feature_matrix.shape
         print self.q_bn_feature_matrix.shape
-        sp = SpringDTW(1000, self.q_bn_feature_matrix, self.c_bn_feature_matrix)
-        matrix, matches, start_end_data, paths = sp.perform_dtw()
-        sp.accdist_calc_v2()
+        sp = SpringDTW(50, self.q_bn_feature_matrix, self.c_bn_feature_matrix)
+        start_time = time.time()
+        matrix, matches, start_end_data, paths, top_k = sp.perform_dtw()
+        print("--- %s seconds to run DTW ---" % (time.time() - start_time))
+        print "Number of top_K data : " + str(len(top_k))
+        for [x, y, z] in top_k:
+            print "%.2f-%.2f"%(float(x)/100, float(y)/100), z
         # matrix = self.flip(matrix)
         for path in paths:
             path_x = []
@@ -118,7 +126,7 @@ class AQSearch:
             path_xs.append(path_x)
             path_ys.append(path_y)
 
-        self.plot_distance(matrix, path_xs, path_ys)
+        #self.plot_distance(matrix, path_xs, path_ys)
         # self.plot_plotly(matrix, path_xs, path_ys, path)
 
 
@@ -126,5 +134,7 @@ if __name__ == '__main__':
     c_wave_path = '/home/gangeshwark/PycharmProjects/AQSearch/data/my4Hellow.wav'
     q_wave_path = '/home/gangeshwark/PycharmProjects/AQSearch/data/queryHellow.wav'
 
-    AQS = AQSearch()
+    c_feat_path = 'outdir/bnf_database/raw_bnfea_fbank_pitch.1.scp'
+    q_feat_path = 'outdir/bnf_query/raw_bnfea_fbank_pitch.1.scp'
+    AQS = AQSearch(q_feat_path, c_feat_path)
     AQS.search()
